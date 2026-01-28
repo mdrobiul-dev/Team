@@ -3,16 +3,24 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+const authRoutes = require("./routes/auth.routes")
+const protected = require("./middlewear/auth.middleware")
+
 const app = express();
 const port = process.env.PORT || 8000;
 
-// middlewares
+
 app.use(cors());
 app.use(express.json());
 
-// test route
-app.get("/api/health", (req, res) => {
-  res.json({ status: "OK", message: "TeamTrack backend running" });
+app.use("/api/auth", authRoutes)
+
+
+app.get("/api/private", protected, (req, res) => {
+  res.json({
+    message: "You accessed a protected route",
+    userId: req.user.id,
+  });
 });
 
 mongoose
